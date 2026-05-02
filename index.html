@@ -2,7 +2,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RSG ULTRA</title>
+<title>RSG Studio</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
 body{background:#0f0f0f;color:white}
@@ -11,8 +11,6 @@ header{display:flex;justify-content:space-between;padding:20px;background:#111}
 nav a{color:white;margin-left:15px;text-decoration:none}
 .hero{text-align:center;padding:100px 20px}
 .btn{padding:10px 20px;background:#00ffcc;border:none;border-radius:8px;cursor:pointer}
-.cards{display:flex;gap:20px;padding:20px}
-.card{flex:1;background:#1a1a1a;padding:20px;border-radius:10px}
 .login-box{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#111;padding:20px;border-radius:10px}
 .post-box{display:none;padding:20px}
 textarea{width:100%;height:100px;margin-top:10px}
@@ -21,14 +19,14 @@ textarea{width:100%;height:100px;margin-top:10px}
 </head>
 <body>
 <header>
-<div class="logo">RSG ULTRA</div>
+<div class="logo">RSG Studio</div>
 <nav>
 <a href="#">Home</a>
 <a href="#" onclick="openLogin()">Login</a>
 </nav>
 </header><section class="hero">
 <h1>Welcome to RSG</h1>
-<p>Admin Control Panel + Posts</p>
+<p>Admin Panel + Saved Posts</p>
 </section><div class="login-box" id="loginBox">
 <h3>Login</h3>
 <input id="user" placeholder="Username"><br>
@@ -54,17 +52,13 @@ function login(){
   let u=document.getElementById('user').value.trim();
   let p=document.getElementById('pass').value.trim();
 
-  let ok=false;
-  for(let acc of accounts){
-    if(acc.user===u && acc.pass===p){
-      ok=true;
-    }
-  }
+  let ok=accounts.some(acc=>acc.user===u && acc.pass===p);
 
   if(ok){
     alert('Login successful');
     document.getElementById('loginBox').style.display='none';
     document.getElementById('postBox').style.display='block';
+    loadPosts();
   }else{
     alert('Wrong login');
   }
@@ -74,12 +68,25 @@ function addPost(){
   let text=document.getElementById('postText').value;
   if(text==='') return;
 
-  let div=document.createElement('div');
-  div.className='post';
-  div.innerText=text;
+  let posts=JSON.parse(localStorage.getItem('rsg_posts'))||[];
+  posts.unshift(text);
+  localStorage.setItem('rsg_posts',JSON.stringify(posts));
 
-  document.getElementById('posts').prepend(div);
   document.getElementById('postText').value='';
+  loadPosts();
+}
+
+function loadPosts(){
+  let posts=JSON.parse(localStorage.getItem('rsg_posts'))||[];
+  let container=document.getElementById('posts');
+  container.innerHTML='';
+
+  posts.forEach(p=>{
+    let div=document.createElement('div');
+    div.className='post';
+    div.innerText=p;
+    container.appendChild(div);
+  });
 }
 </script></body>
 </html>
