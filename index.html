@@ -1,126 +1,45 @@
-<!DOCTYPE html><html lang="ro">
+<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RSG studio</title>
+<title>RSG ULTRA</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial, sans-serif}
-body{
-  background: linear-gradient(135deg,#0f0f0f,#1a1a1a);
-  color:white;
-  overflow-x:hidden;
-}
-header{
-  display:flex;
-  justify-content:space-between;
-  padding:20px;
-  background:rgba(0,0,0,0.6);
-  backdrop-filter:blur(10px);
-}
-.logo{font-size:24px;font-weight:bold;color:#00ffcc}
-nav a{
-  color:white;
-  margin-left:20px;
-  text-decoration:none;
-  transition:0.3s;
-}
-nav a:hover{color:#00ffcc}
-.hero{
-  height:90vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  flex-direction:column;
-  text-align:center;
-}
-.hero h1{
-  font-size:60px;
-  background:linear-gradient(90deg,#00ffcc,#00aaff);
-  -webkit-background-clip:text;
-  color:transparent;
-}
-.hero p{margin-top:10px;color:#ccc}
-.btn{
-  margin-top:20px;
-  padding:12px 30px;
-  border:none;
-  background:#00ffcc;
-  color:black;
-  font-weight:bold;
-  cursor:pointer;
-  border-radius:10px;
-  transition:0.3s;
-}
-.btn:hover{
-  transform:scale(1.1);
-  background:#00aaff;
-}
-.cards{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-  gap:20px;
-  padding:40px;
-}
-.card{
-  background:rgba(255,255,255,0.05);
-  padding:20px;
-  border-radius:15px;
-  transition:0.3s;
-}
-.card:hover{
-  transform:translateY(-10px);
-  background:rgba(0,255,204,0.1);
-}
-.login-box{
-  position:fixed;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%) scale(0);
-  background:#111;
-  padding:30px;
-  border-radius:15px;
-  transition:0.3s;
-}
-.login-box.active{transform:translate(-50%,-50%) scale(1)}
-input{
-  width:100%;
-  padding:10px;
-  margin-top:10px;
-  border:none;
-  border-radius:5px;
-}
-footer{
-  text-align:center;
-  padding:20px;
-  color:#777;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+body{background:#0f0f0f;color:white}
+header{display:flex;justify-content:space-between;padding:20px;background:#111}
+.logo{color:#00ffcc;font-size:22px;font-weight:bold}
+nav a{color:white;margin-left:15px;text-decoration:none}
+.hero{text-align:center;padding:100px 20px}
+.btn{padding:10px 20px;background:#00ffcc;border:none;border-radius:8px;cursor:pointer}
+.cards{display:flex;gap:20px;padding:20px}
+.card{flex:1;background:#1a1a1a;padding:20px;border-radius:10px}
+.login-box{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#111;padding:20px;border-radius:10px}
+.post-box{display:none;padding:20px}
+textarea{width:100%;height:100px;margin-top:10px}
+.post{background:#222;margin-top:10px;padding:10px;border-radius:8px}
 </style>
 </head>
 <body>
 <header>
-<div class="logo">RSG studio</div>
+<div class="logo">RSG ULTRA</div>
 <nav>
 <a href="#">Home</a>
-<a href="#">Tools</a>
-<a href="#">Contact</a>
 <a href="#" onclick="openLogin()">Login</a>
 </nav>
 </header><section class="hero">
-<h1>WELCOME TO RSG</h1>
-<p>Cel mai smecher site facut de tine</p>
-<button class="btn" onclick="alert('Ai apasat pe buton ')">Start</button>
-</section><section class="cards">
-<div class="card">Scripturi JS</div>
-<div class="card">Hack UI</div>
-<div class="card">Proiecte</div>
+<h1>Welcome to RSG</h1>
+<p>Admin Control Panel + Posts</p>
 </section><div class="login-box" id="loginBox">
-<h2>Login</h2>
-<input type="text" id="user" placeholder="Username">
-<input type="password" id="pass" placeholder="Password">
+<h3>Login</h3>
+<input id="user" placeholder="Username"><br>
+<input id="pass" type="password" placeholder="Password"><br><br>
 <button class="btn" onclick="login()">Login</button>
-</div><footer>
-© 2026 RSG studio
-</footer><script>
+</div><div class="post-box" id="postBox">
+<h3>Create Post</h3>
+<textarea id="postText" placeholder="Write something..."></textarea>
+<button class="btn" onclick="addPost()">Post</button>
+<div id="posts"></div>
+</div><script>
 let accounts=[
   {user:"admin1",pass:"1234"},
   {user:"admin2",pass:"abcd"},
@@ -128,21 +47,39 @@ let accounts=[
 ];
 
 function openLogin(){
-  document.getElementById('loginBox').classList.add('active');
+  document.getElementById('loginBox').style.display='block';
 }
 
 function login(){
-  let u=document.getElementById('user').value;
-  let p=document.getElementById('pass').value;
+  let u=document.getElementById('user').value.trim();
+  let p=document.getElementById('pass').value.trim();
 
-  let ok=accounts.find(acc=>acc.user===u && acc.pass===p);
+  let ok=false;
+  for(let acc of accounts){
+    if(acc.user===u && acc.pass===p){
+      ok=true;
+    }
+  }
 
   if(ok){
-    alert("Login reusit ");
-    document.body.style.background="linear-gradient(135deg,#001f1f,#003333)";
+    alert('Login successful');
+    document.getElementById('loginBox').style.display='none';
+    document.getElementById('postBox').style.display='block';
   }else{
-    alert("Cont gresit ");
+    alert('Wrong login');
   }
+}
+
+function addPost(){
+  let text=document.getElementById('postText').value;
+  if(text==='') return;
+
+  let div=document.createElement('div');
+  div.className='post';
+  div.innerText=text;
+
+  document.getElementById('posts').prepend(div);
+  document.getElementById('postText').value='';
 }
 </script></body>
 </html>
